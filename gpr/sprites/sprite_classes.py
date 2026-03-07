@@ -1,0 +1,98 @@
+import pygame
+
+
+class Player(pygame.sprite.Sprite):
+    def __init__(self,image,pos):
+        super().__init__()
+        self.image=image
+        self.rect=self.image.get_rect(center=pos)
+
+        self.pos=pygame.Vector2(self.rect.center)
+        self.direction=pygame.Vector2()
+        self.speed=300
+        self.imdir='right'
+        self.frame=0
+        self.tanime=0
+        self.anime=False
+    def input(self):
+        keys=pygame.key.get_pressed()
+        self.direction.x=0
+        self.direction.y=0
+        if keys[pygame.K_RIGHT]:
+            self.direction.x=1
+            self.imdir='right'
+        if keys[pygame.K_LEFT]:
+            self.direction.x = -1
+            self.imdir = 'left'
+        if keys[pygame.K_DOWN]:
+            self.direction.y=1
+            self.imdir='down'
+        if keys[pygame.K_UP]:
+            self.direction.y=-1
+            self.imdir='up'
+        if self.direction.length() !=0:
+            self.direction=self.direction.normalize()
+            self.anime=True
+        else:
+            self.anime=False
+    def move(self,dt):
+        self.pos+=self.direction*self.speed*dt
+        print(self.pos)
+        self.rect.center=self.pos
+    def animation(self,FPS,playerim):
+        if self.anime:
+            self.tanime+=1
+            self.image=playerim[self.imdir][self.frame]
+            if self.tanime/FPS>0.1:
+                if self.frame==len(playerim[self.imdir])-1:
+                    self.frame=0
+                else:
+                    self.frame+=1
+                self.tanime=0
+    def update(self,dt,FPS,playerim):
+        self.input()
+        self.move(dt)
+        self.animation(FPS,playerim)
+
+class Grass():
+    def __init__(self, image, pos):
+        super().__init__()
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.x = pos[0]
+        self.rect.y = pos[1]
+class Lava():
+    def __init__(self, image, pos):
+        super().__init__()
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.x = pos[0]
+        self.rect.y = pos[1]
+class Water():
+    def __init__(self, image, pos):
+        super().__init__()
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.x = pos[0]
+        self.rect.y = pos[1]
+class Sand():
+    def __init__(self, image, pos):
+        super().__init__()
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.x = pos[0]
+        self.rect.y = pos[1]
+class Rock():
+    def __init__(self, image, pos):
+        super().__init__()
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.x = pos[0]
+        self.rect.y = pos[1]
+
+
+
+
+
+
+
