@@ -67,13 +67,13 @@ class Player(pygame.sprite.Sprite):
                         self.rect.right=sprite.rect.left
                     if self.direction.x<0:
                         self.rect.left = sprite.rect.right
-                        self.pos.x=self.rect.centerx
+                    self.pos.x=self.rect.centerx
                 if direction=='vertical':
                     if self.direction.y>0:
                         self.rect.bottom=sprite.rect.top
                     if self.direction.y<0:
                         self.rect.top = sprite.rect.bottom
-                        self.pos.y=self.rect.centery
+                    self.pos.y=self.rect.centery
 
 
 
