@@ -37,7 +37,6 @@ class Player(pygame.sprite.Sprite):
             self.anime=False
     def move(self,dt):
         self.pos+=self.direction*self.speed*dt
-        print(self.pos)
         self.rect.center=self.pos
     def animation(self,FPS,playerim):
         if self.anime:
@@ -54,35 +53,43 @@ class Player(pygame.sprite.Sprite):
         self.move(dt)
         self.animation(FPS,playerim)
 
-class Grass():
+class Grass(pygame.sprite.Sprite):
     def __init__(self, image, pos):
         super().__init__()
         self.image = image
         self.rect = self.image.get_rect()
         self.rect.x = pos[0]
         self.rect.y = pos[1]
-class Lava():
+class Lava(pygame.sprite.Sprite):
     def __init__(self, image, pos):
         super().__init__()
         self.image = image
         self.rect = self.image.get_rect()
         self.rect.x = pos[0]
         self.rect.y = pos[1]
-class Water():
+class Water(pygame.sprite.Sprite):
     def __init__(self, image, pos):
         super().__init__()
         self.image = image
         self.rect = self.image.get_rect()
         self.rect.x = pos[0]
         self.rect.y = pos[1]
-class Sand():
+class Sand(pygame.sprite.Sprite):
     def __init__(self, image, pos):
         super().__init__()
         self.image = image
         self.rect = self.image.get_rect()
         self.rect.x = pos[0]
         self.rect.y = pos[1]
-class Rock():
+class Rock(pygame.sprite.Sprite):
+    def __init__(self, image, pos):
+        super().__init__()
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.x = pos[0]
+        self.rect.y = pos[1]
+
+class Crystal(pygame.sprite.Sprite):
     def __init__(self, image, pos):
         super().__init__()
         self.image = image
