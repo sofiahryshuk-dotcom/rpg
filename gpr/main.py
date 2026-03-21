@@ -13,10 +13,10 @@ from camera import Camera
 
 from load import*
 def restart():
-    global player,playerg,sandg,waterg,lavag,grassg,rockg,scrollg,rcrystalg,bcrystalg,camera
+    global player,playerg,sandg,waterg,lavag,grassg,rockg,scrollg,rcrystalg,bcrystalg,camera,colsp
     playerg=pygame.sprite.Group()
-    player=Player(playerim['right'][0],(400,400))
-    playerg.add(player)
+
+
     sandg=pygame.sprite.Group()
     waterg=pygame.sprite.Group()
     lavag=pygame.sprite.Group()
@@ -26,8 +26,11 @@ def restart():
     rcrystalg=pygame.sprite.Group()
     bcrystalg = pygame.sprite.Group()
     camera=Camera(8000,8000,w,h)
+    colsp=pygame.sprite.Group()
+    player = Player(playerim['right'][0], (400, 400), colsp)
+    playerg.add(player)
 def gamelvl():
-    global player,playerg,waterg,grassg,lavag,sandg,rockg,scrollg,rcrystalg,bcrystalg,camera
+    global player,playerg,waterg,grassg,lavag,sandg,rockg,scrollg,rcrystalg,bcrystalg,camera,colsp
     waterg.draw(window)
     grassg.draw(window)
     lavag.draw(window)
@@ -45,7 +48,7 @@ def gamelvl():
 
 
 def drawmap(mapFile):
-    global sandg,waterg,grassg,rockg,lavag,scrollg,rcrystalg,bcrystalg,camera
+    global sandg,waterg,grassg,rockg,lavag,scrollg,rcrystalg,bcrystalg,camera,colsp
     gamemap=[]
     with open(mapFile, 'r') as file:
         for i in range(100):
@@ -65,6 +68,7 @@ def drawmap(mapFile):
                     water = Water(waterim, pos)
                     waterg.add(water)
                     scrollg.add(water)
+                    colsp.add(water)
 
                 if gamemap[i][j] == '3':
                     sand = Sand(sandim, pos)
@@ -80,6 +84,7 @@ def drawmap(mapFile):
                     rock = Rock(rockim, pos)
                     rockg.add(rock)
                     scrollg.add(rock)
+                    colsp.add(rock)
 
                 if gamemap[i][j] == '5':
                     rcrystal = Crystal(rcrystalim, pos)
