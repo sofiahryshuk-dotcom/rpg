@@ -116,12 +116,13 @@ class Rock(pygame.sprite.Sprite):
         self.rect.y = pos[1]
 
 class Crystal(pygame.sprite.Sprite):
-    def __init__(self, image, pos):
+    def __init__(self, image, pos,tilep):
         super().__init__()
         self.image = image
         self.rect = self.image.get_rect()
         self.rect.x = pos[0]
         self.rect.y = pos[1]
+        self.tilep=tilep
 
 
 
