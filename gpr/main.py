@@ -11,6 +11,8 @@ window=pygame.display.set_mode((w,h))
 pygame.display.set_caption('rpg')
 clock=pygame.time.Clock()
 from camera import Camera
+MINIMAPTI=5
+MINIMAPPOS=(10,10)
 
 from load import*
 def restart():
@@ -31,7 +33,7 @@ def restart():
     player = Player(playerim['right'][0], (400, 400), colsp)
     playerg.add(player)
 def gamelvl():
-    global player,playerg,waterg,grassg,lavag,sandg,rockg,scrollg,rcrystalg,bcrystalg,camera,colsp,bcrystals,opsize,gamemap
+    global player,playerg,waterg,grassg,lavag,sandg,rockg,scrollg,rcrystalg,bcrystalg,camera,colsp,bcrystals,opsize,gamemap,rcrystals
     # waterg.draw(window)
     # grassg.draw(window)
     # lavag.draw(window)
@@ -42,8 +44,25 @@ def gamelvl():
     # playerg.draw(window)
     playerg.update(dt, FPS, playerim)
     camera.update(player,window,scrollg)
+    if showminimap:
+        drawminimap()
     pygame.display.update()
     cryscol=pygame.sprite.spritecollide(player,bcrystalg,True)
+    rcryscol=pygame.sprite.spritecollide(player,rcrystalg,True)
+    for crystal in rcryscol:
+        rcrystals+=1
+        if rcrystals == 4:
+            clean()
+        i,j=crystal.tilep
+        gamemap[i][j]='3'
+        player_pos = player.rect.center
+        drawmap()
+        player.rect.center = player_pos
+        player.pos = pygame.Vector2(player_pos)
+        scrollg.add(player)
+
+
+
     for crystal in cryscol:
         bcrystals+=1
         i,j=crystal.tilep
@@ -51,6 +70,42 @@ def gamelvl():
 
         openna()
 
+def drawminimap():
+    global gamemap,showmm
+    for i in range(100):
+        for j in range(100):
+
+          tile = gamemap[i][j]
+          x=MINIMAPPOS[0]+j*MINIMAPTI
+          y=MINIMAPPOS[1]+i*MINIMAPTI
+          if tile =='0':
+              color=(50,200,50)
+          elif tile =='1':
+              color=(240,120,50)
+          elif tile =='2':
+              color=(100,100,100)
+          elif tile =='3':
+              color=(250,215,155)
+          elif tile =='4':
+              color=(50,200,240)
+          pygame.draw.rect(window,color,(x,y,MINIMAPTI,MINIMAPTI))
+          playertix=int(player.rect.centerx//80)
+          playertiy=int(player.rect.centery//80)
+          px=MINIMAPPOS[0]+playertix*MINIMAPTI
+          py=MINIMAPPOS[1]+playertiy*MINIMAPTI
+          pygame.draw.rect(window,(255,255,255),(px,py,MINIMAPTI,MINIMAPTI))
+
+def clean():
+    global gamemap
+    for i in range(100):
+        for j in range(100):
+            if gamemap[i][j]=='1':
+                gamemap[i][j]='0'
+    player_pos = player.rect.center
+    drawmap()
+    player.rect.center = player_pos
+    player.pos = pygame.Vector2(player_pos)
+    scrollg.add(player)
 
 
 gamemap=[]
@@ -131,11 +186,11 @@ def openna():
 opsize=20
 bcrystals=0
 restart()
-
+rcrystals=0
 loadmap('game_lvl/rpg2.csv')
 drawmap()
 scrollg.add(player)
-
+showminimap=False
 
 
 while True:
@@ -144,5 +199,10 @@ while True:
         if event.type==pygame.QUIT:
          pygame.quit()
          sys.exit()
+        if event.type==pygame.KEYDOWN:
+            if event.key==pygame.K_m:
+                showminimap=not showminimap
+
+
     window.fill(black)
     gamelvl()
