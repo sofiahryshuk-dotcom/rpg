@@ -9,11 +9,12 @@ class Player(pygame.sprite.Sprite):
         self.colsp=colsp
         self.pos=pygame.Vector2(self.rect.center)
         self.direction=pygame.Vector2()
-        self.speed=300
+        self.speed=1500
         self.imdir='right'
         self.frame=0
         self.tanime=0
         self.anime=False
+        self.item=False
     def input(self):
         keys=pygame.key.get_pressed()
         self.direction.x=0
@@ -74,7 +75,13 @@ class Player(pygame.sprite.Sprite):
                     if self.direction.y<0:
                         self.rect.top = sprite.rect.bottom
                     self.pos.y=self.rect.centery
-
+    def mine(self,gamemap):
+        for sprite in self.colsp:
+            if sprite.rect.colliderect(self.rect.inflate(10,10)):
+                if self.item and sprite.type=='rock':
+                    i,j=sprite.tilep
+                    gamemap[i][j]='0'
+                    sprite.kill()
 
 
 
@@ -86,6 +93,7 @@ class Grass(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = pos[0]
         self.rect.y = pos[1]
+
 class Lava(pygame.sprite.Sprite):
     def __init__(self, image, pos):
         super().__init__()
@@ -93,6 +101,7 @@ class Lava(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = pos[0]
         self.rect.y = pos[1]
+
 class Water(pygame.sprite.Sprite):
     def __init__(self, image, pos):
         super().__init__()
@@ -100,6 +109,8 @@ class Water(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = pos[0]
         self.rect.y = pos[1]
+        self.type='water'
+
 class Sand(pygame.sprite.Sprite):
     def __init__(self, image, pos):
         super().__init__()
@@ -108,12 +119,14 @@ class Sand(pygame.sprite.Sprite):
         self.rect.x = pos[0]
         self.rect.y = pos[1]
 class Rock(pygame.sprite.Sprite):
-    def __init__(self, image, pos):
+    def __init__(self, image, pos,tilep):
         super().__init__()
         self.image = image
         self.rect = self.image.get_rect()
         self.rect.x = pos[0]
         self.rect.y = pos[1]
+        self.type='rock'
+        self.tilep = tilep
 
 class Crystal(pygame.sprite.Sprite):
     def __init__(self, image, pos,tilep):
@@ -124,6 +137,14 @@ class Crystal(pygame.sprite.Sprite):
         self.rect.y = pos[1]
         self.tilep=tilep
 
+class Pick(pygame.sprite.Sprite):
+    def __init__(self, image, pos,tilep):
+        super().__init__()
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.x = pos[0]
+        self.rect.y = pos[1]
+        self.tilep=tilep
 
 
 

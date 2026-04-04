@@ -2,6 +2,7 @@
 import pygame
 import sys
 from sprites.sprite_classes import*
+pygame.mixer.init()
 black=(0,0,0)
 w=800
 h=800
@@ -16,7 +17,7 @@ MINIMAPPOS=(10,10)
 
 from load import*
 def restart():
-    global player,playerg,sandg,waterg,lavag,grassg,rockg,scrollg,rcrystalg,bcrystalg,camera,colsp
+    global player,playerg,sandg,waterg,lavag,grassg,rockg,scrollg,rcrystalg,bcrystalg,camera,colsp,pickg
     playerg=pygame.sprite.Group()
 
 
@@ -28,12 +29,13 @@ def restart():
     scrollg=pygame.sprite.Group()
     rcrystalg=pygame.sprite.Group()
     bcrystalg = pygame.sprite.Group()
+    pickg=pygame.sprite.Group()
     camera=Camera(8000,8000,w,h)
     colsp=pygame.sprite.Group()
     player = Player(playerim['right'][0], (400, 400), colsp)
     playerg.add(player)
 def gamelvl():
-    global player,playerg,waterg,grassg,lavag,sandg,rockg,scrollg,rcrystalg,bcrystalg,camera,colsp,bcrystals,opsize,gamemap,rcrystals
+    global player,playerg,waterg,grassg,lavag,sandg,rockg,scrollg,rcrystalg,bcrystalg,camera,colsp,bcrystals,opsize,gamemap,rcrystals,pickcol,pick
     # waterg.draw(window)
     # grassg.draw(window)
     # lavag.draw(window)
@@ -42,6 +44,7 @@ def gamelvl():
     # rcrystalg.draw(window)
     # bcrystalg.draw(window)
     # playerg.draw(window)
+    upmusic()
     playerg.update(dt, FPS, playerim)
     camera.update(player,window,scrollg)
     if showminimap:
@@ -60,6 +63,20 @@ def gamelvl():
         player.rect.center = player_pos
         player.pos = pygame.Vector2(player_pos)
         scrollg.add(player)
+
+    pickcol = pygame.sprite.spritecollide(player, pickg, True)
+    for pick in pickcol:
+        player.item=True
+        if player.item==True:
+            print('67')
+        i, j = pick.tilep
+        gamemap[i][j] = '3'
+        player_pos = player.rect.center
+        drawmap()
+        player.rect.center = player_pos
+        player.pos = pygame.Vector2(player_pos)
+        scrollg.add(player)
+
 
 
 
@@ -118,7 +135,7 @@ def loadmap(mapFile):
 
 
 def drawmap():
-    global sandg,waterg,grassg,rockg,lavag,scrollg,rcrystalg,bcrystalg,camera,colsp,gamemap,opsize
+    global sandg,waterg,grassg,rockg,lavag,scrollg,rcrystalg,bcrystalg,camera,colsp,gamemap,opsize,pickg
     scrollg.empty()
     grassg.empty()
     sandg.empty()
@@ -128,6 +145,7 @@ def drawmap():
     rcrystalg.empty()
     colsp.empty()
     rockg.empty()
+    pickg.empty()
 
 
 
@@ -159,7 +177,7 @@ def drawmap():
                 scrollg.add(lava)
 
             if gamemap[i][j] == '2':
-                rock = Rock(rockim, pos)
+                rock = Rock(rockim, pos,(i,j))
                 rockg.add(rock)
                 scrollg.add(rock)
                 colsp.add(rock)
@@ -173,6 +191,11 @@ def drawmap():
                 bcrystal = Crystal(bcrystalim, pos,(i,j))
                 bcrystalg.add(bcrystal)
                 scrollg.add(bcrystal)
+
+            if gamemap[i][j] == '7':
+                pick = Pick(pickim, pos, (i, j))
+                pickg.add(pick)
+                scrollg.add(pick)
 
 def openna():
     global opsize,scrollg,camera,gamemap
@@ -191,9 +214,33 @@ loadmap('game_lvl/rpg2.csv')
 drawmap()
 scrollg.add(player)
 showminimap=False
+curzone=None
+def upmusic():
+    global curzone,gamemap
+    tilex=player.rect.centerx//80
+    tiley=player.rect.centery//80
+    tile=gamemap[tiley][tilex]
+    if tile=='1':
+        newzone="lava"
+    else:
+        newzone='grass'
+    print(curzone)
+    if newzone != curzone:
+        curzone = newzone
+        if newzone == 'grass':
+            pygame.mixer.music.load('assets/sounds/fantasy-forest.ogg')
+        elif newzone == 'lava':
+            pygame.mixer.music.load('assets/sounds/labyrinth-theme.mp3')
+        pygame.mixer.music.play(-1)
 
+
+pygame.mixer.music.load('assets/sounds/background-music.mp3')
+pygame.mixer.music.play(-1)
+pygame.mixer.music.set_volume(1)
 
 while True:
+
+
     dt=clock.tick(FPS)/1000
     for event in pygame.event.get():
         if event.type==pygame.QUIT:
@@ -202,6 +249,18 @@ while True:
         if event.type==pygame.KEYDOWN:
             if event.key==pygame.K_m:
                 showminimap=not showminimap
+            if event.key ==pygame.K_SPACE:
+                player.mine(gamemap)
+                player_pos = player.rect.center
+                drawmap()
+                player.rect.center = player_pos
+                player.pos = pygame.Vector2(player_pos)
+                scrollg.add(player)
+            if event.key==pygame.K_p:
+                pygame.mixer.music.pause()
+            if event.key==pygame.K_o:
+                pygame.mixer.music.unpause()
+
 
 
     window.fill(black)
