@@ -77,9 +77,6 @@ def gamelvl():
         player.pos = pygame.Vector2(player_pos)
         scrollg.add(player)
 
-
-
-
     for crystal in cryscol:
         bcrystals+=1
         i,j=crystal.tilep
