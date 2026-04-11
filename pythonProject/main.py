@@ -1,6 +1,7 @@
 import pygame
 import sys
 from sprites.sprite_classes import*
+from pygwidgets import*
 pygame.mixer.init()
 black=(0,0,0)
 w=800
@@ -16,8 +17,13 @@ MINIMAPPOS=(10,10)
 
 from load import*
 def restart():
-    global player, playerg, sandg, waterg, lavag, grassg, rockg, scrollg, rcrystalg, bcrystalg, camera, colsp, pickg
+    global player, playerg, sandg, waterg, lavag, grassg, rockg, scrollg, rcrystalg, bcrystalg, camera, colsp, pickg,hpt,cst,qt,qv,npcg
     playerg = pygame.sprite.Group()
+
+    hpt = pygwidgets.DisplayText(window, (11, 22), 'HP:100', fontSize=35, textColor=(0, 0, 0))
+    cst = pygwidgets.DisplayText(window, (10, 50), 'MONEY:0', fontSize=40, textColor=(250, 226, 20))
+    qt = DisplayText(window, (0, 0), 'ДЕНЬГИ!!!', 'Helvetica', fontSize=20, textColor=(0, 0, 0),backgroundColor=(255, 255, 200))
+    qv = False
 
     sandg = pygame.sprite.Group()
     waterg = pygame.sprite.Group()
@@ -28,13 +34,14 @@ def restart():
     rcrystalg = pygame.sprite.Group()
     bcrystalg = pygame.sprite.Group()
     pickg = pygame.sprite.Group()
+    npcg = pygame.sprite.Group()
     camera = Camera(8000, 8000, w, h)
     colsp = pygame.sprite.Group()
     player = Player(playerim['right'][0], (400, 400), colsp)
     playerg.add(player)
 
 def gamelvl():
-    global player, playerg, waterg, grassg, lavag, sandg, rockg, scrollg, rcrystalg, bcrystalg, camera, colsp, bcrystals, opsize, gamemap, rcrystals, pickcol, pick
+    global player, playerg, waterg, grassg, lavag, sandg, rockg, scrollg, rcrystalg, bcrystalg, camera, colsp, bcrystals, opsize, gamemap, rcrystals, pickcol, pick,hpt,cst,qt,qv,npcg
     # waterg.draw(window)
     # grassg.draw(window)
     # lavag.draw(window)
@@ -59,6 +66,16 @@ def gamelvl():
         player.rect.center = player_pos
         player.pos = pygame.Vector2(player_pos)
         scrollg.add(player)
+    qv = False
+    for npc in npcg:
+        dis = abs(player.rect.centerx - npc.rect.centerx)
+        if dis < 100:
+            qv = True
+            qt.setLoc((npc.rect.centerx - 80, npc.rect.top - 40))
+
+    if qv == True:
+        qt.draw()
+
 
 
 
@@ -109,7 +126,7 @@ def loadmap(mapFile):
 
 
 def drawmap():
-    global sandg,waterg,grassg,rockg,lavag,scrollg,rcrystalg,bcrystalg,camera,colsp,gamemap,opsize,pickg
+    global sandg,waterg,grassg,rockg,lavag,scrollg,rcrystalg,bcrystalg,camera,colsp,gamemap,opsize,pickg,hpt,cst,qt,qv,npcg
     scrollg.empty()
     grassg.empty()
     sandg.empty()
@@ -120,6 +137,7 @@ def drawmap():
     colsp.empty()
     rockg.empty()
     pickg.empty()
+    npcg.empty()
 
 
 
@@ -170,6 +188,11 @@ def drawmap():
                 pick = Pick(pickim, pos, (i, j))
                 pickg.add(pick)
                 scrollg.add(pick)
+
+            elif gamemap[i][j] == '8':
+                npc = NPC(npcim[0], pos)
+                npcg.add(npc)
+                scrollg.add(npc)
 
 opsize=100
 bcrystals=0

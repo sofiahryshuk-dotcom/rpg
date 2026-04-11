@@ -1,5 +1,5 @@
 import pygame
-
+FPS=60
 
 class Player(pygame.sprite.Sprite):
     def __init__(self,image,pos,colsp):
@@ -146,7 +146,7 @@ class NPC(pygame.sprite.Sprite):
         self.frame = 0
         self.tanime = 0
 
-    def update(self, step, playerg, player, steng,FPS,npcim,portalim):
+    def update(self, step, playerg, player,FPS,npcim):
         self.rect.x += step
         self.animation(FPS,npcim)
     def animation(self, FPS, npcim):
