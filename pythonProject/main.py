@@ -8,7 +8,7 @@ h=800
 FPS=60
 pygame.init()
 window=pygame.display.set_mode((w,h))
-pygame.display.set_caption('rpg')
+pygame.display.set_caption('(ˉ﹃ˉ)')
 clock=pygame.time.Clock()
 from camera import Camera
 MINIMAPTI=5
