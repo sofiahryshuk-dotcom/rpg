@@ -1,4 +1,3 @@
-import pygame
 from script import*
 playerim={'right':load_image('assets/images/player/right'),
           'up':load_image('assets/images/player/up'),
