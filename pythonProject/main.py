@@ -16,12 +16,17 @@ MINIMAPPOS=(10,10)
 
 from load import*
 def restart():
-    global player, playerg, sandg, waterg, lavag, grassg, rockg, scrollg, rcrystalg, bcrystalg, camera, colsp, pickg,qt,qv,npcg
+    global player, playerg, sandg, waterg, lavag, grassg, rockg, scrollg, rcrystalg, bcrystalg, camera, colsp, pickg,qt,qv,npcg,qt2,qv2,cst,cs
     playerg = pygame.sprite.Group()
+    cst = pygwidgets.DisplayText(window, (0, 0), 'MONEY:0', fontSize=40, textColor=(255, 0, 255))
+    cs=0
 
-
-    qt = DisplayText(window, (0, 0), 'ПЕРЕКРАСЬ МИР В КРАСКИ', 'Helvetica', fontSize=30, textColor=(0, 0, 0),backgroundColor=(55, 95, 200))
+    qt = DisplayText(window, (0, 0), 'ПЕРЕКРАСЬ МИР ', 'Helvetica', fontSize=30, textColor=(0, 0, 0),backgroundColor=(198, 77, 228))
     qv = False
+    qt2 = DisplayText(window, (0, 0), 'дай 4 монеты-получи зеленую краску', 'Helvetica', fontSize=30, textColor=(0, 0, 0),
+                     backgroundColor=(67, 42,52))
+    qv2 = False
+    cst.setLoc((0,0))
 
     sandg = pygame.sprite.Group()
     waterg = pygame.sprite.Group()
@@ -39,7 +44,7 @@ def restart():
     playerg.add(player)
 
 def gamelvl():
-    global player, playerg, waterg, grassg, lavag, sandg, rockg, scrollg, rcrystalg, bcrystalg, camera, colsp, bcrystals, opsize, gamemap, rcrystals, pickcol, pick,qt,qv,npcg
+    global player, playerg, waterg, grassg, lavag, sandg, rockg, scrollg, rcrystalg, bcrystalg, camera, colsp, bcrystals, opsize, gamemap, rcrystals, pickcol, pick,qt,qv,npcg,qt2,qv2,cst,cs
     # waterg.draw(window)
     # grassg.draw(window)
     # lavag.draw(window)
@@ -52,11 +57,26 @@ def gamelvl():
     npcg.update( playerg, player,FPS,npcim)
     playerg.update(dt, FPS, playerim)
     camera.update(player, window, scrollg)
+    cst.draw()
 
     if showminimap:
         drawminimap()
 
+
+    rcryscol = pygame.sprite.spritecollide(player, rcrystalg, True)
     cryscol = pygame.sprite.spritecollide(player, bcrystalg, True)
+    for crystal in rcryscol:
+        rcrystals += 1
+        cs+=1
+        cst.setValue(f'MONEY:{cs}')
+        i, j = crystal.tilep
+        gamemap[i][j] = '3'
+        player_pos = player.rect.center
+        drawmap()
+        player.rect.center = player_pos
+        player.pos = pygame.Vector2(player_pos)
+        scrollg.add(player)
+
     for crystal in cryscol:
         clean()
         i, j = crystal.tilep
@@ -67,18 +87,28 @@ def gamelvl():
         player.pos = pygame.Vector2(player_pos)
         scrollg.add(player)
     qv = False
+    qv2=False
     for npc in npcg:
         dis = ((player.rect.centerx - npc.rect.centerx)**2+(player.rect.centery - npc.rect.centery)**2)**0.5
 
         if dis < 100:
-            qv = True
-            qt.setLoc((300,300))
+            print(player.rect.centery)
+            if player.rect.centery<2000:
+             qv = True
+             qt.setLoc((300,300))
+            else:
+                if rcrystals<4:
+                 qv2=True
+                 qt2.setLoc((300, 300))
+                else:
+                    clean()
+                    cs=0
+                    cst.setValue(f'MONEY:{cs}')
 
-
-            print(npc.rect.center)
     if qv==True:
         qt.draw()
-        print(qt.getLoc())
+    if qv2==True:
+        qt2.draw()
     pygame.display.update()
 
 
@@ -133,7 +163,7 @@ def loadmap(mapFile):
 
 
 def drawmap():
-    global sandg,waterg,grassg,rockg,lavag,scrollg,rcrystalg,bcrystalg,camera,colsp,gamemap,opsize,pickg,qt,qv,npcg
+    global sandg,waterg,grassg,rockg,lavag,scrollg,rcrystalg,bcrystalg,camera,colsp,gamemap,opsize,pickg,qt,qv,npcg,qt2,qv2,cst,cs
     scrollg.empty()
     grassg.empty()
     sandg.empty()
@@ -182,7 +212,7 @@ def drawmap():
                 colsp.add(rock)
 
             if gamemap[i][j] == '5':
-                rcrystal = Crystal(rcrystalim, pos,(i,j))
+                rcrystal = Crystal(coinim, pos,(i,j))
                 rcrystalg.add(rcrystal)
                 scrollg.add(rcrystal)
 
@@ -200,6 +230,8 @@ def drawmap():
                 npc = NPC(npcim[0], pos)
                 npcg.add(npc)
                 scrollg.add(npc)
+
+
 
 opsize=100
 bcrystals=0

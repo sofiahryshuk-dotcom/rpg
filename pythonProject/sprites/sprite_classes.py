@@ -158,3 +158,11 @@ class NPC(pygame.sprite.Sprite):
             else:
                 self.frame += 1
             self.tanime = 0
+class Coin(pygame.sprite.Sprite):
+    def __init__(self,image,pos):
+        super().__init__()
+        self.image=image
+        self.rect=self.image.get_rect()
+        self.rect.x=pos[0]
+        self.rect.y=pos[1]
+

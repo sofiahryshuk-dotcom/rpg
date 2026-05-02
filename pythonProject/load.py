@@ -12,3 +12,5 @@ rcrystalim=pygame.image.load('assets/images/blocks/red_crystal.png').convert_alp
 bcrystalim=pygame.image.load('assets/images/blocks/blue_crystal.png').convert_alpha()
 pickim=pygame.image.load('assets/images/blocks/pick.png').convert_alpha()
 npcim=load_image('assets/images/npc')
+coinim=pygame.image.load('assets/images/blocks/coin0.png').convert_alpha()
+npc2im=pygame.image.load('assets/images/enemy/2/1.png').convert_alpha()
